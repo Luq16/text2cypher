@@ -1,0 +1,280 @@
+{
+  "metadata": {
+    "name": "QIAGEN Biomedical Knowledge Base (BKB)",
+    "version": "2025",
+    "description": "Comprehensive biomedical knowledge graph with causal relationships",
+    "statistics": {
+      "total_nodes": "600M+",
+      "total_relationships": "600M+",
+      "drugs": 17000,
+      "diseases": 94000,
+      "genes": 51000,
+      "chemicals": 49000,
+      "causal_relationships": 1480000
+    }
+  },
+  "node_types": [
+    {
+      "label": "Drug",
+      "description": "Pharmaceutical drugs and therapeutic compounds",
+      "properties": [
+        "id",
+        "name",
+        "synonyms",
+        "drugbank_id",
+        "indication",
+        "mechanism",
+        "target_genes"
+      ],
+      "count": 17000
+    },
+    {
+      "label": "Compound",
+      "description": "Chemical compounds and molecules",
+      "properties": [
+        "id",
+        "name",
+        "synonyms",
+        "chembl_id",
+        "smiles",
+        "inchi",
+        "molecular_weight"
+      ],
+      "count": 49000
+    },
+    {
+      "label": "Gene",
+      "description": "Human genes",
+      "properties": [
+        "id",
+        "symbol",
+        "name",
+        "synonyms",
+        "entrez_id",
+        "ensembl_id",
+        "chromosome",
+        "description"
+      ],
+      "count": 51000
+    },
+    {
+      "label": "Protein",
+      "description": "Protein products of genes",
+      "properties": [
+        "id",
+        "name",
+        "synonyms",
+        "uniprot_id",
+        "protein_class",
+        "function"
+      ]
+    },
+    {
+      "label": "Disease",
+      "description": "Human diseases and conditions",
+      "properties": [
+        "id",
+        "name",
+        "synonyms",
+        "mesh_id",
+        "icd10_code",
+        "description",
+        "category"
+      ],
+      "count": 94000
+    },
+    {
+      "label": "Pathway",
+      "description": "Biological pathways",
+      "properties": [
+        "id",
+        "name",
+        "pathway_id",
+        "database",
+        "description"
+      ]
+    },
+    {
+      "label": "Function",
+      "description": "Biological functions and processes",
+      "properties": [
+        "id",
+        "name",
+        "go_id",
+        "description",
+        "category"
+      ],
+      "count": 51000
+    },
+    {
+      "label": "Biomarker",
+      "description": "Biological markers for disease states",
+      "properties": [
+        "id",
+        "name",
+        "biomarker_type",
+        "associated_diseases"
+      ]
+    },
+    {
+      "label": "CellType",
+      "description": "Cell types",
+      "properties": ["id", "name", "tissue", "description"]
+    },
+    {
+      "label": "Tissue",
+      "description": "Human tissues and organs",
+      "properties": ["id", "name", "organ_system", "description"]
+    },
+    {
+      "label": "BiologicalProcess",
+      "description": "Biological processes from GO",
+      "properties": ["id", "name", "go_id", "description"]
+    },
+    {
+      "label": "MolecularFunction",
+      "description": "Molecular functions from GO",
+      "properties": ["id", "name", "go_id", "description"]
+    }
+  ],
+  "relationship_types": [
+    {
+      "type": "TREATS",
+      "description": "Drug treats disease",
+      "source": ["Drug", "Compound"],
+      "target": ["Disease"],
+      "direction": "activating",
+      "properties": ["evidence", "confidence_score", "clinical_trial_phase"]
+    },
+    {
+      "type": "CAUSES",
+      "description": "Entity causes disease or phenotype",
+      "source": ["Gene", "Protein", "Compound"],
+      "target": ["Disease"],
+      "direction": "activating",
+      "properties": ["evidence", "confidence_score"]
+    },
+    {
+      "type": "TARGETS",
+      "description": "Drug targets gene or protein",
+      "source": ["Drug", "Compound"],
+      "target": ["Gene", "Protein"],
+      "properties": ["binding_affinity", "mechanism", "evidence"]
+    },
+    {
+      "type": "INTERACTS_WITH",
+      "description": "Physical or functional interaction",
+      "source": ["Protein", "Gene", "Compound"],
+      "target": ["Protein", "Gene", "Compound"],
+      "properties": ["interaction_type", "evidence", "confidence_score"]
+    },
+    {
+      "type": "ACTIVATES",
+      "description": "Entity activates another entity",
+      "source": ["Drug", "Compound", "Protein", "Gene"],
+      "target": ["Gene", "Protein", "Pathway"],
+      "direction": "activating",
+      "properties": ["mechanism", "evidence", "cell_type"]
+    },
+    {
+      "type": "INHIBITS",
+      "description": "Entity inhibits another entity",
+      "source": ["Drug", "Compound", "Protein", "Gene"],
+      "target": ["Gene", "Protein", "Pathway"],
+      "direction": "inhibiting",
+      "properties": ["mechanism", "evidence", "cell_type"]
+    },
+    {
+      "type": "UPREGULATES",
+      "description": "Entity increases expression of target",
+      "source": ["Drug", "Compound", "Gene", "Protein"],
+      "target": ["Gene", "Protein"],
+      "direction": "activating",
+      "properties": ["fold_change", "evidence", "tissue"]
+    },
+    {
+      "type": "DOWNREGULATES",
+      "description": "Entity decreases expression of target",
+      "source": ["Drug", "Compound", "Gene", "Protein"],
+      "target": ["Gene", "Protein"],
+      "direction": "inhibiting",
+      "properties": ["fold_change", "evidence", "tissue"]
+    },
+    {
+      "type": "BINDS_TO",
+      "description": "Physical binding interaction",
+      "source": ["Drug", "Compound", "Protein"],
+      "target": ["Protein", "Gene"],
+      "properties": ["binding_site", "affinity", "evidence"]
+    },
+    {
+      "type": "PARTICIPATES_IN",
+      "description": "Entity participates in pathway or process",
+      "source": ["Gene", "Protein"],
+      "target": ["Pathway", "BiologicalProcess"],
+      "properties": ["role", "evidence"]
+    },
+    {
+      "type": "ASSOCIATED_WITH",
+      "description": "Statistical or clinical association",
+      "source": ["Gene", "Protein", "Biomarker"],
+      "target": ["Disease"],
+      "properties": ["association_type", "p_value", "odds_ratio", "evidence"]
+    },
+    {
+      "type": "REGULATES",
+      "description": "General regulatory relationship",
+      "source": ["Gene", "Protein"],
+      "target": ["Gene", "Protein", "BiologicalProcess"],
+      "properties": ["regulation_type", "evidence"]
+    },
+    {
+      "type": "TRANSCRIBES",
+      "description": "Transcription relationship",
+      "source": ["Gene"],
+      "target": ["Protein"],
+      "properties": ["transcript_id"]
+    },
+    {
+      "type": "PHOSPHORYLATES",
+      "description": "Phosphorylation modification",
+      "source": ["Protein"],
+      "target": ["Protein"],
+      "properties": ["residue", "evidence"]
+    },
+    {
+      "type": "EXPRESSED_IN",
+      "description": "Expression in tissue or cell type",
+      "source": ["Gene", "Protein"],
+      "target": ["Tissue", "CellType"],
+      "properties": ["expression_level", "evidence"]
+    }
+  ],
+  "common_patterns": [
+    {
+      "name": "drug_repurposing",
+      "description": "Find drugs that target similar genes/proteins for new indications",
+      "pattern": "(drug1:Drug)-[:TARGETS]->(target)<-[:TARGETS]-(drug2:Drug)"
+    },
+    {
+      "name": "target_identification",
+      "description": "Find genes/proteins associated with a disease",
+      "pattern": "(disease:Disease)<-[:ASSOCIATED_WITH|CAUSES]-(gene:Gene)"
+    },
+    {
+      "name": "indication_expansion",
+      "description": "Find new disease indications for existing drugs",
+      "pattern": "(drug:Drug)-[:TARGETS]->(gene:Gene)-[:ASSOCIATED_WITH]->(disease:Disease)"
+    },
+    {
+      "name": "pathway_analysis",
+      "description": "Analyze pathways involved in disease",
+      "pattern": "(disease:Disease)<-[:ASSOCIATED_WITH]-(gene:Gene)-[:PARTICIPATES_IN]->(pathway:Pathway)"
+    },
+    {
+      "name": "mechanism_of_action",
+      "description": "Understand drug mechanism through targets and pathways",
+      "pattern": "(drug:Drug)-[:TARGETS]->(target)-[:PARTICIPATES_IN]->(pathway:Pathway)"
+    }
+  ]
+}
